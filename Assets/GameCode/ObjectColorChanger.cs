@@ -6,30 +6,43 @@ using UnityEngine;
 public enum ColorState
 {
     Red,
-    Blue
+    Blue,
+    None
 }
 public class ObjectColorChanger : MonoBehaviour
 {
-    [SerializeField] Material _matMine;                                     //  내 메테리얼
-    [SerializeField] Material _matOpponent;                                 //  상대 메테리얼
-    private Renderer _objectRenderer;
-    private Dictionary<int, ColorState> _objectColorStates;                 // 오브젝트의 상태를 저장하는 딕셔너리
+    [SerializeField] private ColorState _colorState = ColorState.None;
+    [Header("Material Settings")]
+    [SerializeField] private Material _matMine;                                     //  내 메테리얼
+    [SerializeField] private Material _matOpponent;                                 //  상대 메테리얼
+    private Renderer _objectRenderer;                                       //  해당 오브젝트 렌더러
 
+    [Header("Particle Settings")]
+    [SerializeField] private ParticleSystem _particleMine;                      //  내 파티클
+    [SerializeField] private ParticleSystem _particleOpponent;                      //  상대 파티클
+
+    private GameManager _gameManager;
     private void Start()
     {
         _objectRenderer = GetComponent<Renderer>();
-        // _objectColorStates = new Dictionary<int, ColorState>();
+        _gameManager = FindObjectOfType<GameManager>();
     }
 
     private void OnTriggerEnter(Collider collider)
     {
         if (collider.CompareTag("Player"))
         {
-            _objectRenderer.material = _matMine;
+            _colorState = ColorState.Red;
+            _objectRenderer.material = _matMine;    // 색 변경
+            _particleMine.Play();
+
         }
         else if (collider.CompareTag("Computer"))
         {
-            _objectRenderer.material = _matOpponent;
+            _colorState = ColorState.Blue;
+            _objectRenderer.material = _matOpponent;    // 색 변경
+            _particleOpponent.Play();
+
         }
     }
 }

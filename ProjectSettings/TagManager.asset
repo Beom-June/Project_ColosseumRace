@@ -9,6 +9,8 @@ TagManager:
   - Red
   - Blue
   - WayPoint
+  - EventPoint
+  - ReturnPoint
   layers:
   - Default
   - TransparentFX

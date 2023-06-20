@@ -48,7 +48,6 @@ public class ReinforcementsController : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            Debug.Log(player != null);
             Vector3 _lookDirection = player.transform.forward;
             _lookDirection.y = 0f; // 수직 방향으로 회전되지 않도록 y값을 0으로 설정
             transform.rotation = Quaternion.LookRotation(_lookDirection);

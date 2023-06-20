@@ -19,6 +19,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _radius = 5f;
     [SerializeField] private LayerMask _targetLayer;
 
+    [Header("Camera Settings")]
+    [SerializeField] private GameObject _mainCamera;
+    [SerializeField] private GameObject _eventCamera;
+    private Transform _lastPosition;
+
 
     void Start()
     {
@@ -81,5 +86,40 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, _radius);
+    }
+
+    // 카메라 움직임 코루틴
+    IEnumerator MoveObjectSmoothly(Transform start, Transform end, float duration, GameObject targetObject)
+    {
+        float elapsedTime = 0f;
+        Vector3 startPosition = start.position;
+        Quaternion startRotation = start.rotation;
+
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            // 이동 및 회전 보간
+            targetObject.transform.position = Vector3.Lerp(startPosition, end.position, t);
+            targetObject.transform.rotation = Quaternion.Lerp(startRotation, end.rotation, t);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        // 이동이 완료되었을 때 마지막 위치를 저장
+        _lastPosition = end;
+    }
+
+    private void OnTriggerEnter(Collider collider)
+    {
+        if (collider.CompareTag("EventPoint"))
+        {
+            StartCoroutine(MoveObjectSmoothly(_mainCamera.transform, _eventCamera.transform, 6, _mainCamera));
+            _mainCamera.SetActive(false);
+            _eventCamera.SetActive(true);
+        }
+        else if (collider.CompareTag("ReturnPoint"))
+        {
+            StartCoroutine(MoveObjectSmoothly(_eventCamera.transform, _mainCamera.transform, 6, _mainCamera));
+        }
     }
 }

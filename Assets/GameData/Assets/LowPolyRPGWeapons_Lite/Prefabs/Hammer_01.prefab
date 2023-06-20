@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8967095078329889072}
   - component: {fileID: 5466911329091501717}
   - component: {fileID: 7798732254085007967}
-  - component: {fileID: 7246736389675969369}
   m_Layer: 0
   m_Name: Hammer_01
   m_TagString: Untagged
@@ -52,6 +51,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -82,17 +82,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &7246736389675969369
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8591273635324488586}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -5585701443973051977, guid: 1978b0a3e563c684a926418906719528, type: 3}

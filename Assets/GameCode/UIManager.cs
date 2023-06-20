@@ -5,24 +5,33 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private Text _getPointRed;                     //  레드 포인트 텍스트
-    [SerializeField] private Text _getPointBlue;                    //  블루 포인트 텍스트
-    private static UIManager _instance;                             //  인스턴스 선언
-    public static UIManager Instance
+    [SerializeField] private Text _textRedLevel;                     //  레드 레벨
+    [SerializeField] private Text _textBlueLevel;                   //  블루 레벨
+
+    private Camera _mainCamera;                          // 메인 카메라
+    private GameManager _gameManager;                    // 게임 매니저
+
+    private void Start()
     {
-        get { return _instance; }
+        _mainCamera = Camera.main;
+        _gameManager = FindObjectOfType<GameManager>();
     }
 
-    private void Awake()
+    private void LateUpdate()
     {
-        _instance = this;
+        RotateUI();
     }
 
-    // 포인트 텍스트 업데이트 메서드
-    public void UpdatePointText(int pointRed, int pointBlue)
+    // Text 컴포넌트가 항상 메인 카메라를 향하도록 회전 설정
+    void RotateUI()
     {
-        Debug.Log("UI");
-        _getPointRed.text = pointRed.ToString();
-        _getPointBlue.text = pointBlue.ToString();
+        _textRedLevel.transform.rotation = _mainCamera.transform.rotation;
+        //_textBlueLevel.transform.rotation = _mainCamera.transform.rotation;
+    }
+
+        // _textRedLevel 텍스트 업데이트
+    public void UpdateRedLevelText(int redLevel)
+    {
+        _textRedLevel.text = "Lv. " + (redLevel * 10).ToString();
     }
 }

@@ -26,12 +26,17 @@ public class UIManager : MonoBehaviour
     void RotateUI()
     {
         _textRedLevel.transform.rotation = _mainCamera.transform.rotation;
-        //_textBlueLevel.transform.rotation = _mainCamera.transform.rotation;
+        _textBlueLevel.transform.rotation = _mainCamera.transform.rotation;
     }
 
-        // _textRedLevel 텍스트 업데이트
-    public void UpdateRedLevelText(int redLevel)
+    // _textRedLevel 텍스트 업데이트
+    public void UpdateRedLevelText(int _redLevel)
     {
-        _textRedLevel.text = "Lv. " + (redLevel * 10).ToString();
+        _textRedLevel.text = "Lv. " + (_redLevel * 10).ToString();
+    }
+    // _textBlueLevel 텍스트 업데이트
+    public void UpdateBlueLevelText(int _blueLevel)
+    {
+        _textBlueLevel.text = "Lv. " + (_blueLevel * 10).ToString();
     }
 }

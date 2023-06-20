@@ -7,6 +7,8 @@ TagManager:
   - FxTemporaire
   - Computer
   - Red
+  - Blue
+  - WayPoint
   layers:
   - Default
   - TransparentFX

@@ -8,10 +8,10 @@ public class ReinforcementsController : MonoBehaviour
     void Start()
     {
         // 플레이어의 Animator 컴포넌트 가져오기
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        GameObject _player = GameObject.FindGameObjectWithTag("Player");
+        if (_player != null)
         {
-            _playerAnimator = player.GetComponent<Animator>();
+            _playerAnimator = _player.GetComponent<Animator>();
         }
     }
 
@@ -27,17 +27,17 @@ public class ReinforcementsController : MonoBehaviour
         if (_playerAnimator != null)
         {
             // 플레이어의 애니메이션 값을 가져와서 현재 객체의 애니메이션에 적용
-            float isRun = _playerAnimator.GetFloat("isRun");
-            bool doAttack = _playerAnimator.GetBool("doAttack");
+            float _isRun = _playerAnimator.GetFloat("isRun");
+            bool _doAttack = _playerAnimator.GetBool("doAttack");
 
             // 현재 객체의 Animator 컴포넌트에 애니메이션 값을 설정
-            Animator animator = GetComponent<Animator>();
-            animator.SetFloat("isRun", isRun);
+            Animator _animator = GetComponent<Animator>();
+            _animator.SetFloat("isRun", _isRun);
 
             // doAttack이 true로 변경되면 트리거 설정
-            if (doAttack)
+            if (_doAttack)
             {
-                animator.SetTrigger("doAttack");
+                _animator.SetTrigger("doAttack");
             }
         }
     }
@@ -49,9 +49,9 @@ public class ReinforcementsController : MonoBehaviour
         if (player != null)
         {
             Debug.Log(player != null);
-            Vector3 lookDirection = player.transform.forward;
-            lookDirection.y = 0f; // 수직 방향으로 회전되지 않도록 y값을 0으로 설정
-            transform.rotation = Quaternion.LookRotation(lookDirection);
+            Vector3 _lookDirection = player.transform.forward;
+            _lookDirection.y = 0f; // 수직 방향으로 회전되지 않도록 y값을 0으로 설정
+            transform.rotation = Quaternion.LookRotation(_lookDirection);
         }
     }
 }

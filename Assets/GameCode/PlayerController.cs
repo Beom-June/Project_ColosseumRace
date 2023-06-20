@@ -7,14 +7,13 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Player Settings")]
     [SerializeField] private float _moveSpeed = 5f;                //   이동 속도
-    [SerializeField] private float _rotationSpeed = 5f;            //   이동 속도
+    [SerializeField] private float _rotationSpeed = 5f;            //   회전 속도
     private float _horizontalAxis;                                  //  수평 입력 값
     private float _verticalAxis;                                    //  수직 입력 값
     private bool _isRun;                                            //  달리기 bool 값
     private Vector3 _moveVector;                                    //  moveVector 저장 
     private Animator _playerAnimator;                               //  Animator 저장
     private Rigidbody _playerRigidbody;                             //  Rigidbody 저장
-    [SerializeField] private GameObject _reinforcements;            //  지원군 프리팹
 
     [Header("Raycast Settings")]
     [SerializeField] private float _radius = 5f;
@@ -53,7 +52,7 @@ public class PlayerController : MonoBehaviour
         _playerAnimator.SetFloat("isRun", _isRun ? 1f : 0f);
     }
 
-    // 플레이어 방향
+    // 플레이어 보는 방향
     private void PlayerTurn()
     {
         if (_moveVector != Vector3.zero)
@@ -62,7 +61,6 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         }
     }
-
     private void PlayerRaycast()
     {
         // 스피어 레이캐스트 발사
@@ -84,35 +82,4 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, _radius);
     }
-
-    // // 지원군 생성 함수
-    // private void SpawnReinforcements()
-    // {
-    //     int _reinforcementsCount = 1;                           //  생성할 지원군의 개수
-    //     float _angleStep = 360f / (_reinforcementsCount * 5);          //  지원군이 생성될 각도 간격
-
-    //     for (int i = 0; i < _reinforcementsCount; i++)
-    //     {
-    //         // 지원군을 생성할 각도 계산
-    //         float _angle = i * _angleStep;
-    //         Quaternion _rotation = Quaternion.Euler(0f, _angle, 0f);
-
-    //         // 플레이어 주변에 생성할 위치 계산
-    //         Vector3 _offset = _rotation * Vector3.forward * (_radius - 1.5f);      //  레이 원안 으로 넣으려고 보정
-    //         Vector3 _spawnPosition = transform.position + _offset;
-
-    //         // 지원군 생성 및 플레이어의 자식으로 설정
-    //         GameObject reinforcements = Instantiate(_reinforcements, _spawnPosition, _rotation);
-    //         reinforcements.transform.SetParent(transform);
-    //     }
-    // }
-
-    // private void OnTriggerEnter(Collider collider)
-    // {
-    //     if (collider.CompareTag("Red"))
-    //     {
-    //         SpawnReinforcements();
-    //         Destroy(collider.gameObject);
-    //     }
-    // }
 }

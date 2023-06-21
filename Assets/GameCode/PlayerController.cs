@@ -17,7 +17,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("Raycast Settings")]
     [SerializeField] private float _radius = 5f;
-    [SerializeField] private LayerMask _targetLayer;
+    [SerializeField] private LayerMask _targetComputer;                //  Computer 레이어 찾기용
+    [SerializeField] private LayerMask _targetKnight;                //  Kinght 레이어 찾기용
 
     [Header("Camera Settings")]
     [SerializeField] private GameObject _mainCamera;
@@ -49,7 +50,8 @@ public class PlayerController : MonoBehaviour
         PlayerMove();
         PlayerTurn();
 
-        PlayerRaycast();
+        RaycastToComputer();
+        RaycastToKnight();
     }
 
     // Input
@@ -77,10 +79,12 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         }
     }
-    private void PlayerRaycast()
+
+    //  레이어를 Computer 한 것 찾기
+    private void RaycastToComputer()
     {
         // 스피어 레이캐스트 발사
-        Collider[] hits = Physics.OverlapSphere(transform.position, _radius, _targetLayer);
+        Collider[] hits = Physics.OverlapSphere(transform.position, _radius, _targetComputer);
 
         // 충돌한 객체들을 확인
         foreach (Collider hit in hits)
@@ -95,6 +99,28 @@ public class PlayerController : MonoBehaviour
                 // 시작하여 일정 시간이 지난 후 공격 딜레이를 리셋
                 _isAttackDelay = true;
                 StartCoroutine(ResetAttackDelay(_attackDelayTime));
+            }
+        }
+    }
+    //  레이어를 Knight 한 것 찾기
+    private void RaycastToKnight()
+    {
+        // 스피어 레이캐스트 발사
+        Collider[] hits = Physics.OverlapSphere(transform.position, _radius, _targetKnight);
+
+        // 충돌한 객체들을 확인
+        foreach (Collider hit in hits)
+        {
+            Debug.Log("나이트옴");
+
+            if (!_isAttackDelay)
+            {
+                // 타겟이 들어왔을 때 해당 애니메이션을 트리거
+                _playerAnimator.SetTrigger("doStandingJumpAttack");
+
+                //// 시작하여 일정 시간이 지난 후 공격 딜레이를 리셋
+                //_isAttackDelay = true;
+                //StartCoroutine(ResetAttackDelay(_attackDelayTime));
             }
         }
     }
@@ -177,10 +203,6 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(TriggerEvent02(_changTime));
             StartCoroutine(MoveCameraSmoothly(_eventCameraPoint.transform, _returnCameraPoint.transform, _cameraMoveTime, _mainCamera));
         }
-
-
-
-
 
         if (collider.CompareTag("ReturnPoint"))
         {

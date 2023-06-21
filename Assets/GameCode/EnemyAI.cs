@@ -8,6 +8,9 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float _moveSpeed = 20f;                //  �̵� �ӵ�
     [SerializeField] private float _rotationSpeed = 20f;            //  ȸ�� �ӵ�
     [SerializeField] private List<Transform> _wayPoints;            //  �̵��� ���� ����Ʈ
+    [SerializeField] private ParticleSystem _bloodParticle;         //  적 감소시 나오는 피 파티클
+    [SerializeField] private Vector3 _correctPos = new Vector3(0, 0, 0);
+
     private Vector3 _moveVector;                                    //  moveVector ���� 
     private Animator _enemyAnimator;                                //  Animator ����
     private Rigidbody _enemyRigidbody;                              //  Rigidbody ����
@@ -103,6 +106,17 @@ public class EnemyAI : MonoBehaviour
         // 다음 웨이포인트 설정
         SetRandomWayPoint();
     }
+
+    private void ControllParticle()
+    {
+        // 애들 위치에서 _bloodParticle 파티클 생성
+        GameObject reinforcementToRemove = _enemyZone.spawnedReinforcements[_enemyZone.spawnedReinforcementsCount];
+        Transform reinforcementTransform = reinforcementToRemove.transform;
+        ParticleSystem bloodParticleInstance = Instantiate(_bloodParticle, reinforcementTransform.position + _correctPos, reinforcementTransform.rotation);
+
+        // _bloodParticle 재생
+        bloodParticleInstance.Play();
+    }
     private void OnTriggerEnter(Collider collider)
     {
         if (collider.CompareTag("WayPoint"))
@@ -117,6 +131,9 @@ public class EnemyAI : MonoBehaviour
             if (_enemyZone.spawnedReinforcementsCount > 0)
             {
                 _enemyZone.spawnedReinforcementsCount--;
+
+                ControllParticle();
+
                 GameObject reinforcementToRemove = _enemyZone.spawnedReinforcements[_enemyZone.spawnedReinforcementsCount];
                 _enemyZone.spawnedReinforcements.RemoveAt(_enemyZone.spawnedReinforcementsCount);
                 Destroy(reinforcementToRemove);

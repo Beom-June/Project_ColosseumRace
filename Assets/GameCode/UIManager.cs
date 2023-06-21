@@ -12,10 +12,30 @@ public class UIManager : MonoBehaviour
     private Camera _mainCamera;                                     // 메인 카메라
     private GameManager _gameManager;                               // 게임 매니저
 
+    [Header("Bonus Arrow")]
+    [SerializeField] private RawImage _bonusArrow;                                //  화살표 ui
+    [SerializeField] private float _movementDistance = 100f;  // 이동 거리
+    [SerializeField] private float _movementSpeed = 2f;      // 이동 속도
+    private bool _isMovingRight = true;  // 현재 이동 방향
+
+    [Header("UI Settings")]
+    [SerializeField] private Text _noThanks;
+    private bool _increasingAlpha = true;
+    private float _alpha = 0f;
+    private float _alphaStep = 1f;
+
+
     private void Start()
     {
         _mainCamera = Camera.main;
         _gameManager = FindObjectOfType<GameManager>();
+
+        StartCoroutine(MoveArrow());
+    }
+
+    private void Update()
+    {
+        TextAlphaEffect();
     }
 
     private void LateUpdate()
@@ -44,5 +64,59 @@ public class UIManager : MonoBehaviour
     public void UpdateBlueLevelText(int _blueLevel)
     {
         _textBlueLevel.text = "Lv. " + (_blueLevel * 10).ToString();
+    }
+
+    private void TextAlphaEffect()
+    {
+        // 알파값 증감 로직
+        if (_increasingAlpha)
+        {
+            _alpha += _alphaStep;
+            if (_alpha >= 255f)
+            {
+                _alpha = 255f;
+                _increasingAlpha = false;
+            }
+        }
+        else
+        {
+            _alpha -= _alphaStep;
+            if (_alpha <= 0f)
+            {
+                _alpha = 0f;
+                _increasingAlpha = true;
+            }
+        }
+
+        // 텍스트 알파값 적용
+        Color textColor = _noThanks.color;
+        textColor.a = _alpha / 255f;
+        _noThanks.color = textColor;
+    }
+
+    // 화살표 UI 코루틴
+    private IEnumerator MoveArrow()
+    {
+        while (true)
+        {
+            // 현재 위치와 목표 위치 계산
+            float startX = _isMovingRight ? -_movementDistance : _movementDistance;
+            float targetX = _isMovingRight ? _movementDistance : -_movementDistance;
+
+            // 이동 애니메이션
+            float t = 0f;
+            while (t < 1f)
+            {
+                t += Time.deltaTime * _movementSpeed;
+                float newX = Mathf.Lerp(startX, targetX, t);
+                Vector3 newPosition = _bonusArrow.rectTransform.localPosition;
+                newPosition.x = newX;
+                _bonusArrow.rectTransform.localPosition = newPosition;
+                yield return null;
+            }
+
+            // 이동 방향 변경
+            _isMovingRight = !_isMovingRight;
+        }
     }
 }

@@ -6,24 +6,24 @@ public class EnemyReinforcementsZone : MonoBehaviour
 {
     [Header("Reinforcements Settings")]
     [SerializeField] private GameObject _target;
-    [SerializeField] private GameObject _reinforcements;                            
-    [SerializeField] private int _spawnedReinforcementsCount;         
+    [SerializeField] private GameObject _reinforcements;
+    [SerializeField] private int _spawnedReinforcementsCount;
     [SerializeField] private List<GameObject> _spawnedReinforcements; // 생성된 애들을 저장할 리스트             
 
     [Header("Camp Settings")]
     [SerializeField] private float _radius = 3f;
-    [SerializeField] private float _angleStep = 72f;                
+    [SerializeField] private float _angleStep = 72f;
 
     public int spawnedReinforcementsCount
     {
         get { return _spawnedReinforcementsCount; }
-        set { _spawnedReinforcementsCount = value; } 
+        set { _spawnedReinforcementsCount = value; }
     }
 
     public List<GameObject> spawnedReinforcements
     {
-                get { return _spawnedReinforcements; }
-        set { _spawnedReinforcements = value; } 
+        get { return _spawnedReinforcements; }
+        set { _spawnedReinforcements = value; }
     }
 
     void Update()

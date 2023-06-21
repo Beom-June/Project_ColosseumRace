@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class EnemyReinforcementsController : MonoBehaviour
 {
-    [SerializeField] private Animator _enemyAnimator;           //  ÀûÀÇÀÇ ¾Ö´Ï¸ŞÀÌÅÍ ÄÄÆ÷³ÍÆ®
+    [SerializeField] private Animator _enemyAnimator;          
     void Start()
     {
-        // ÇÃ·¹ÀÌ¾îÀÇ Animator ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
         GameObject _enemy = GameObject.FindGameObjectWithTag("Computer");
         if (_enemy != null)
         {
@@ -21,35 +20,38 @@ public class EnemyReinforcementsController : MonoBehaviour
         ImitateEnemyLookat();
     }
 
-    //  Enemy ¾Ö´Ï¸ŞÀÌÅÍ ¸ğ¹æ
+    //  Enemy, ë¶€ëª¨ì˜ ì• ë‹ˆë©”ì´ì…˜ ë°›ì•„ì˜´
     void ImitateEnemyAnimator()
     {
         if (_enemyAnimator != null)
         {
-            // ÇÃ·¹ÀÌ¾îÀÇ ¾Ö´Ï¸ŞÀÌ¼Ç °ªÀ» °¡Á®¿Í¼­ ÇöÀç °´Ã¼ÀÇ ¾Ö´Ï¸ŞÀÌ¼Ç¿¡ Àû¿ë
             float _isRun = _enemyAnimator.GetFloat("isRun");
             bool _doAttack = _enemyAnimator.GetBool("doAttack");
+            bool _doKnockedDown = _enemyAnimator.GetBool("isKnockedDown");
 
-            // ÇöÀç °´Ã¼ÀÇ Animator ÄÄÆ÷³ÍÆ®¿¡ ¾Ö´Ï¸ŞÀÌ¼Ç °ªÀ» ¼³Á¤
             Animator _animator = GetComponent<Animator>();
             _animator.SetFloat("isRun", _isRun);
 
-            // doAttackÀÌ true·Î º¯°æµÇ¸é Æ®¸®°Å ¼³Á¤
             if (_doAttack)
             {
                 _animator.SetTrigger("doAttack");
             }
+
+            if(_doKnockedDown)
+            {
+                _animator.SetTrigger("isKnockedDown");
+            }
         }
     }
 
-    // Enemy°¡ ¹Ù¶óº¸´Â ¹æÇâÀ» º¸µµ·Ï È¸ÀüÀ» ¼³Á¤
+    
     void ImitateEnemyLookat()
     {
         GameObject _enemy = GameObject.FindGameObjectWithTag("Computer");
         if (_enemy != null)
         {
             Vector3 _lookDirection = _enemy.transform.forward;
-            _lookDirection.y = 0f; // ¼öÁ÷ ¹æÇâÀ¸·Î È¸ÀüµÇÁö ¾Êµµ·Ï y°ªÀ» 0À¸·Î ¼³Á¤
+            _lookDirection.y = 0f; 
             transform.rotation = Quaternion.LookRotation(_lookDirection);
         }
     }

@@ -11,6 +11,10 @@ TagManager:
   - WayPoint
   - EventPoint
   - ReturnPoint
+  - Zone
+  - Knight
+  - EventPoint01
+  - EventPoint02
   layers:
   - Default
   - TransparentFX

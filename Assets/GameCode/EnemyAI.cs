@@ -5,23 +5,27 @@ using UnityEngine;
 public class EnemyAI : MonoBehaviour
 {
     [Header("Enemy Settings")]
-    [SerializeField] private float _moveSpeed = 20f;                //  ÀÌµ¿ ¼Óµµ
-    [SerializeField] private float _rotationSpeed = 20f;            //  È¸Àü ¼Óµµ
-    [SerializeField] private List<Transform> _wayPoints;            //  ÀÌµ¿ÇÒ ¿şÀÌ Æ÷ÀÎÆ®
-    private Vector3 _moveVector;                                    //  moveVector ÀúÀå 
-    private Animator _enemyAnimator;                                //  Animator ÀúÀå
-    private Rigidbody _enemyRigidbody;                              //  Rigidbody ÀúÀå
-    private Transform _currentWayPoint;                             //  ÇöÀç ÀÌµ¿ÇÒ ¿şÀÌ Æ÷ÀÎÆ®
+    [SerializeField] private float _moveSpeed = 20f;                //  ï¿½Ìµï¿½ ï¿½Óµï¿½
+    [SerializeField] private float _rotationSpeed = 20f;            //  È¸ï¿½ï¿½ ï¿½Óµï¿½
+    [SerializeField] private List<Transform> _wayPoints;            //  ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
+    private Vector3 _moveVector;                                    //  moveVector ï¿½ï¿½ï¿½ï¿½ 
+    private Animator _enemyAnimator;                                //  Animator ï¿½ï¿½ï¿½ï¿½
+    private Rigidbody _enemyRigidbody;                              //  Rigidbody ï¿½ï¿½ï¿½ï¿½
+    private Transform _currentWayPoint;                             //  ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
     private List<Transform> _visitedWayPoints;
 
+    [SerializeField] private EnemyReinforcementsZone _enemyZone;
+
+    [Header("Attack Action Settings")]
+    [SerializeField] private float _stopTime;                       //  í”¼ê²©í›„ ëŒ€ê¸°ì‹œê°„;
+    [SerializeField] private bool _isKnockedDown = false;  // í”¼ê²© ìƒíƒœ ì—¬ë¶€
+    [SerializeField] private bool _isStopped = false;      // ì´ë™ ë©ˆì¶¤ ì—¬ë¶€
     void Start()
     {
         _enemyAnimator = GetComponent<Animator>();
         _enemyRigidbody = GetComponent<Rigidbody>();
         _visitedWayPoints = new List<Transform>();
 
-
-        // ½ÃÀÛ ½Ã ·£´ıÇÑ ¿şÀÌ Æ÷ÀÎÆ®¸¦ ¼±ÅÃ
         if (_wayPoints.Count > 0)
         {
             SetRandomWayPoint();
@@ -30,11 +34,14 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        EnemyMove();
-        EnemyTurn();
+        if (!_isKnockedDown && !_isStopped)
+        {
+            EnemyMove();
+            EnemyTurn();
+        }
     }
 
-    // Àû ÀÌµ¿ ÇÔ¼ö
+    // Enemy ì´ë™ ë©”ì†Œë“œ
     private void EnemyMove()
     {
         if (_currentWayPoint != null)
@@ -42,17 +49,15 @@ public class EnemyAI : MonoBehaviour
             _moveVector = (_currentWayPoint.position - transform.position).normalized;
             transform.position += _moveVector * _moveSpeed * Time.deltaTime;
 
-            // ÀûÀÌ ¿òÁ÷ÀÏ ¶§ "isRun" ÆÄ¶ó¹ÌÅÍ¿¡ 1 ¼³Á¤
             _enemyAnimator.SetFloat("isRun", 1f);
         }
         else
         {
-            // ÀûÀÌ ¸ØÃâ ¶§ "isRun" ÆÄ¶ó¹ÌÅÍ¿¡ 0 ¼³Á¤
             _enemyAnimator.SetFloat("isRun", 0f);
         }
     }
 
-    // Àû º¸´Â ¹æÇâ
+    //  Enmy íšŒì „ ë©”ì†Œë“œ
     private void EnemyTurn()
     {
         if (_moveVector != Vector3.zero)
@@ -66,7 +71,6 @@ public class EnemyAI : MonoBehaviour
     {
         List<Transform> _availableWayPoints = new List<Transform>(_wayPoints);
 
-        // ÀÌ¹Ì ¹æ¹®ÇÑ ¿şÀÌ Æ÷ÀÎÆ® Á¦¿Ü
         _availableWayPoints.RemoveAll(wp => _visitedWayPoints.Contains(wp));
 
         if (_availableWayPoints.Count > 0)
@@ -76,20 +80,49 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            // ¸ğµç ¿şÀÌ Æ÷ÀÎÆ®¸¦ ¹æ¹®ÇÑ °æ¿ì, ¸ğµç ¿şÀÌ Æ÷ÀÎÆ®¸¦ Àç¹æ¹®ÇÒ ¼ö ÀÖµµ·Ï ÃÊ±âÈ­
+            //  ë¹„ì›Œì£¼ê³  ë‹¤ì‹œ ëœë¤ ì¬ìƒì„±
             _visitedWayPoints.Clear();
             int _randIndex = Random.Range(0, _wayPoints.Count);
             _currentWayPoint = _wayPoints[_randIndex];
         }
     }
+    private void StopEnemyMovement()
+    {
+        _isKnockedDown = true;
+        _isStopped = true;
 
+        // ì´í›„ _stopTime ì´í›„ì— ì´ë™ ì¬ê°œ
+        Invoke("ResumeEnemyMovement", _stopTime);
+    }
+
+    private void ResumeEnemyMovement()
+    {
+        _isKnockedDown = false;
+        _isStopped = false;
+
+        // ë‹¤ìŒ ì›¨ì´í¬ì¸íŠ¸ ì„¤ì •
+        SetRandomWayPoint();
+    }
     private void OnTriggerEnter(Collider collider)
     {
         if (collider.CompareTag("WayPoint"))
         {
-            // ÇöÀç ¿şÀÌ Æ÷ÀÎÆ®¸¦ ¹æ¹®ÇÑ °ÍÀ¸·Î ±â·Ï
             _visitedWayPoints.Add(_currentWayPoint);
             SetRandomWayPoint();
+        }
+
+        if (collider.CompareTag("Zone"))
+        {
+            _enemyAnimator.SetTrigger("isKnockedDown");
+            if (_enemyZone.spawnedReinforcementsCount > 0)
+            {
+                _enemyZone.spawnedReinforcementsCount--;
+                GameObject reinforcementToRemove = _enemyZone.spawnedReinforcements[_enemyZone.spawnedReinforcementsCount];
+                _enemyZone.spawnedReinforcements.RemoveAt(_enemyZone.spawnedReinforcementsCount);
+                Destroy(reinforcementToRemove);
+
+            }
+            StopEnemyMovement();
         }
     }
 }

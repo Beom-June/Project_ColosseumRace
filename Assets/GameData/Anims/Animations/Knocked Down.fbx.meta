@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 10d1ec9eb6e93417599b3b920b87159d
+guid: 94f93b5b4c1ac45c6a8e6bcba8e46982
 ModelImporter:
   serializedVersion: 21100
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Knoked Down
+    second: KnockedDown
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -35,11 +35,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Knoked Down
+      name: KnockedDown
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 168
+      lastFrame: 101
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -52,9 +52,9 @@ ModelImporter:
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
@@ -286,13 +286,13 @@ ModelImporter:
         length: 0
         modified: 0
     skeleton:
-    - name: Knocked Down(Clone)
+    - name: Knocked Down 1(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Armature
-      parentName: Knocked Down(Clone)
+      parentName: Knocked Down 1(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
@@ -422,12 +422,12 @@ ModelImporter:
       rotation: {x: -0, y: -0.0000008233472, z: 0.00000006688059, w: 1}
       scale: {x: 1.0000013, y: 1.0000007, z: 1.0000007}
     - name: CH_Body
-      parentName: Knocked Down(Clone)
+      parentName: Knocked Down 1(Clone)
       position: {x: 0.0000000144355, y: 0.0043979436, z: -0.000000011443699}
       rotation: {x: -0.00000021656288, y: 0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: CH_Head
-      parentName: Knocked Down(Clone)
+      parentName: Knocked Down 1(Clone)
       position: {x: -0.000000004534286, y: 0.004397884, z: -0.0000000032026062}
       rotation: {x: -0.00000021656288, y: 0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}

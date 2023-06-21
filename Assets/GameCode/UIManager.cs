@@ -5,11 +5,12 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private Text _textRedLevel;                     //  레드 레벨
-    [SerializeField] private Text _textBlueLevel;                   //  블루 레벨
+    [SerializeField] private Text _textRedLevel;                     //  레드 레벨 텍스트
+    [SerializeField] private Text _textBlueLevel;                   //  블루 레벨 텍스트
+    [SerializeField] private List<Text> _textEnemyLevel;             //  적 레벨 텍스트
 
-    private Camera _mainCamera;                          // 메인 카메라
-    private GameManager _gameManager;                    // 게임 매니저
+    private Camera _mainCamera;                                     // 메인 카메라
+    private GameManager _gameManager;                               // 게임 매니저
 
     private void Start()
     {
@@ -27,6 +28,11 @@ public class UIManager : MonoBehaviour
     {
         _textRedLevel.transform.rotation = _mainCamera.transform.rotation;
         _textBlueLevel.transform.rotation = _mainCamera.transform.rotation;
+
+        for (int i = 0; i < _textEnemyLevel.Count; i++)
+        {
+            _textEnemyLevel[i].transform.rotation = _mainCamera.transform.rotation;
+        }
     }
 
     // _textRedLevel 텍스트 업데이트

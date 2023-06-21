@@ -6,46 +6,49 @@ public class EnemyReinforcementsZone : MonoBehaviour
 {
     [Header("Reinforcements Settings")]
     [SerializeField] private GameObject _target;
-    [SerializeField] private GameObject _reinforcements;                             //  Áö¿ø±º ÇÁ¸®ÆÕ
-    [SerializeField] private int _spawnedReinforcementsCount;                        // »ı¼ºµÈ Áö¿ø±º °³¼ö
+    [SerializeField] private GameObject _reinforcements;                            
+    [SerializeField] private int _spawnedReinforcementsCount;         
+    [SerializeField] private List<GameObject> _spawnedReinforcements; // ìƒì„±ëœ ì• ë“¤ì„ ì €ì¥í•  ë¦¬ìŠ¤íŠ¸             
 
     [Header("Camp Settings")]
     [SerializeField] private float _radius = 3f;
-    [SerializeField] private float _angleStep = 72f;                //  °¢µµ Áõ°¡·®
+    [SerializeField] private float _angleStep = 72f;                
 
     public int spawnedReinforcementsCount
     {
         get { return _spawnedReinforcementsCount; }
-        set { value = _spawnedReinforcementsCount; }
+        set { _spawnedReinforcementsCount = value; } 
+    }
+
+    public List<GameObject> spawnedReinforcements
+    {
+                get { return _spawnedReinforcements; }
+        set { _spawnedReinforcements = value; } 
     }
 
     void Update()
     {
         if (_target != null)
         {
-            // _targetÀÇ À§Ä¡¸¦ µû¶ó°¡µµ·Ï ÇØ´ç ¿ÀºêÁ§Æ®ÀÇ À§Ä¡¸¦ ¾÷µ¥ÀÌÆ®
             transform.position = _target.transform.position;
         }
     }
 
     private void SpawnReinforcements()
     {
-        // ½Ã°è ¹æÇâÀ¸·Î »ı¼ºµÉ °¢µµ °è»ê
         float _angle = _angleStep;
         Quaternion _rotation = Quaternion.Euler(0f, _angle, 0f);
 
-        // »ı¼ºµÈ Áö¿ø±º °³¼ö Áõ°¡
         _spawnedReinforcementsCount++;
 
-        // ÇÃ·¹ÀÌ¾î ÁÖº¯¿¡ »ı¼ºÇÒ À§Ä¡ °è»ê
         Vector3 _offset = Quaternion.Euler(0f, _angle, 0f) * (Vector3.forward * _radius);
         Vector3 _spawnPosition = transform.position + _offset;
 
-        // Áö¿ø±º »ı¼º ¹× ÇÃ·¹ÀÌ¾îÀÇ ÀÚ½ÄÀ¸·Î ¼³Á¤
         GameObject reinforcements = Instantiate(_reinforcements, _spawnPosition, _rotation);
         reinforcements.transform.SetParent(transform);
 
-        // _angle °ªÀ» Áõ°¡ (À§Ä¡ º¸Á¤ÇÏ±â À§ÇØ¼­)
+        _spawnedReinforcements.Add(reinforcements); // ìƒì„±ëœ ì• ë“¤ì„ ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
+
         _angleStep += _angleStep;
     }
     private void OnTriggerEnter(Collider collider)

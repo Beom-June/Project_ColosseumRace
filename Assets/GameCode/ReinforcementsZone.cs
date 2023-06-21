@@ -8,6 +8,7 @@ public class ReinforcementsZone : MonoBehaviour
     [SerializeField] private GameObject _target;
     [SerializeField] private GameObject _reinforcements;                             //  지원군 프리팹
     [SerializeField] private int _spawnedReinforcementsCount;                        // 생성된 지원군 개수
+    [SerializeField] private List<GameObject> _spawnedReinforcements; // 생성된 애들을 저장할 리스트             
 
 
     [Header("Camp Settings")]
@@ -44,6 +45,8 @@ public class ReinforcementsZone : MonoBehaviour
         GameObject reinforcements = Instantiate(_reinforcements, _spawnPosition, _rotation);
         reinforcements.transform.SetParent(transform);
 
+        _spawnedReinforcements.Add(reinforcements); // 생성된 애들을 리스트에 추가
+
         // _angle 값을 증가 (위치 보정하기 위해서)
         _angleStep += _angleStep;
     }
@@ -53,6 +56,16 @@ public class ReinforcementsZone : MonoBehaviour
         {
             SpawnReinforcements();
             Destroy(collider.gameObject);
+        }
+        if (collider.CompareTag("Knight"))
+        {
+            if (_spawnedReinforcementsCount > 0)
+            {
+                _spawnedReinforcementsCount--;
+                GameObject reinforcementToRemove = _spawnedReinforcements[_spawnedReinforcementsCount];
+                _spawnedReinforcements.RemoveAt(_spawnedReinforcementsCount);
+                Destroy(reinforcementToRemove);
+            }
         }
     }
 }

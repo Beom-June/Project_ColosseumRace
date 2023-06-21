@@ -21,9 +21,20 @@ public class PlayerController : MonoBehaviour
 
     [Header("Camera Settings")]
     [SerializeField] private GameObject _mainCamera;
-    [SerializeField] private GameObject _eventCamera;
-    private Transform _lastPosition;
+    [SerializeField] private GameObject _eventCameraPoint;
+    [SerializeField] private GameObject _returnCameraPoint;
+    [SerializeField] private float _cameraMoveTime;
+    private Transform _savePosition;
 
+    [Header("Event Settings")]
+    [SerializeField] private GameObject _eventInOut;                //  안에서 통로로 나갈때
+    [SerializeField] private GameObject _eventOutInt;               //  통로에서 안으로 들어올 때
+    [SerializeField] private float _changTime;
+    [SerializeField] private bool _isChecking;                      //  체크용 bool 값
+
+    [Header("Attack Action Settings")]
+    [SerializeField] private float _attackDelayTime = 3.0f;      // 공격 딜레이 시간
+    [SerializeField] private bool _isAttackDelay = false;        // 공격 딜레이 bool 값
 
     void Start()
     {
@@ -76,8 +87,15 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("타겟 들어옴");
 
-            // 타겟이 들어왔을 때 해당 애니메이션을 트리거
-            _playerAnimator.SetTrigger("doAttack");
+            if (!_isAttackDelay)
+            {
+                // 타겟이 들어왔을 때 해당 애니메이션을 트리거
+                _playerAnimator.SetTrigger("doAttack");
+
+                // 시작하여 일정 시간이 지난 후 공격 딜레이를 리셋
+                _isAttackDelay = true;
+                StartCoroutine(ResetAttackDelay(_attackDelayTime));
+            }
         }
     }
 
@@ -88,38 +106,85 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, _radius);
     }
 
+    //  공격 딜레이 코루틴
+    private IEnumerator ResetAttackDelay(float time)
+    {
+        yield return new WaitForSeconds(time);
+        _isAttackDelay = false;
+    }
+
     // 카메라 움직임 코루틴
-    IEnumerator MoveObjectSmoothly(Transform start, Transform end, float duration, GameObject targetObject)
+    IEnumerator MoveCameraSmoothly(Transform start, Transform end, float duration, GameObject targetObject)
     {
         float elapsedTime = 0f;
-        Vector3 startPosition = start.position;
-        Quaternion startRotation = start.rotation;
 
         while (elapsedTime < duration)
         {
-            float t = elapsedTime / duration;
-            // 이동 및 회전 보간
-            targetObject.transform.position = Vector3.Lerp(startPosition, end.position, t);
-            targetObject.transform.rotation = Quaternion.Lerp(startRotation, end.rotation, t);
+            Vector3 startPosition = start.position;
+            Vector3 endPosition = end.position;
+
+            Quaternion startRotation = start.rotation;
+            Quaternion endRotation = end.rotation;
 
             elapsedTime += Time.deltaTime;
+            // 계산된 위치와 회전값을 적용
+            targetObject.transform.position = Vector3.Lerp(startPosition, endPosition, elapsedTime / duration);
+            targetObject.transform.rotation = Quaternion.Lerp(startRotation, endRotation, elapsedTime / duration);
+
+
             yield return null;
         }
+
         // 이동이 완료되었을 때 마지막 위치를 저장
-        _lastPosition = end;
+        _savePosition = end;
+    }
+    private IEnumerator TriggerEvent01(float time)
+    {
+        _isChecking = true;
+        yield return new WaitForSeconds(time);
+
+        if (_isChecking)
+        {
+            _eventInOut.SetActive(false);
+            _eventOutInt.SetActive(true);
+        }
+
+        _isChecking = false;
     }
 
+    private IEnumerator TriggerEvent02(float time)
+    {
+        _isChecking = true;
+        yield return new WaitForSeconds(time);
+
+        if (_isChecking)
+        {
+            _eventInOut.SetActive(true);
+            _eventOutInt.SetActive(false);
+        }
+
+        _isChecking = false;
+    }
     private void OnTriggerEnter(Collider collider)
     {
-        if (collider.CompareTag("EventPoint"))
+        if (collider.CompareTag("EventPoint01"))
         {
-            StartCoroutine(MoveObjectSmoothly(_mainCamera.transform, _eventCamera.transform, 6, _mainCamera));
-            _mainCamera.SetActive(false);
-            _eventCamera.SetActive(true);
+            StartCoroutine(TriggerEvent01(_changTime));
+            StartCoroutine(MoveCameraSmoothly(_mainCamera.transform, _eventCameraPoint.transform, _cameraMoveTime, _mainCamera));
         }
-        else if (collider.CompareTag("ReturnPoint"))
+        else if (collider.CompareTag("EventPoint02"))
         {
-            StartCoroutine(MoveObjectSmoothly(_eventCamera.transform, _mainCamera.transform, 6, _mainCamera));
+            StartCoroutine(TriggerEvent02(_changTime));
+            StartCoroutine(MoveCameraSmoothly(_eventCameraPoint.transform, _returnCameraPoint.transform, _cameraMoveTime, _mainCamera));
+        }
+
+
+
+
+
+        if (collider.CompareTag("ReturnPoint"))
+        {
+            StartCoroutine(MoveCameraSmoothly(_eventCameraPoint.transform, _returnCameraPoint.transform, _cameraMoveTime, _mainCamera));
         }
     }
 }

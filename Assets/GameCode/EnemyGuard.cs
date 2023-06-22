@@ -141,10 +141,10 @@ public class EnemyGuard : MonoBehaviour
         // JumpAttack이면 _guardLevel 감소 및 날아가기 동작 처리 (플레이어 레벨이 더 높아야 작동하게 함)
         if (_doJumpAttack && _gameManager.redCount >= _guardLevel)
         {
-            _guardLevel--;
+                _guardLevel--;
 
             // _guardLevel이 0이 되면 날아가기 동작 수행
-            if (_guardLevel == 0)
+            if (_guardLevel <= 0)
             {
                 FlyAway();
                 _endUI.SetActive(true);
@@ -164,21 +164,5 @@ public class EnemyGuard : MonoBehaviour
                 FlyAway();
             }
         }
-        // if (_isBoss && collider.CompareTag("Zone"))
-        // {
-        //     Debug.Log("111");
-        //     bool _doJumpAttack = _playerAnimator.GetBool("doStandingJumpAttack");
-        //     if (_doJumpAttack)
-        //     {
-        //         Debug.Log("2222");
-        //         _guardLevel--;
-        //         // 적 레벨이 0 이면 날려버림
-        //         if (_guardLevel == 0)
-        //         {
-        //             FlyAway();
-        //         }
-        //     }
-
-        // }
     }
 }

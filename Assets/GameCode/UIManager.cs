@@ -13,13 +13,13 @@ public class UIManager : MonoBehaviour
     private GameManager _gameManager;                               // 게임 매니저
 
     [Header("Bonus Arrow")]
-    [SerializeField] private RawImage _bonusArrow;                                //  화살표 ui
+    [SerializeField] private List<RawImage> _bonusArrow;                                //  화살표 ui
     [SerializeField] private float _movementDistance = 100f;  // 이동 거리
     [SerializeField] private float _movementSpeed = 2f;      // 이동 속도
     private bool _isMovingRight = true;  // 현재 이동 방향
 
     [Header("UI Settings")]
-    [SerializeField] private Text _noThanks;
+    [SerializeField] private List<Text> _noThanks;
     private bool _increasingAlpha = true;
     private float _alpha = 0f;
     private float _alphaStep = 1f;
@@ -87,11 +87,13 @@ public class UIManager : MonoBehaviour
                 _increasingAlpha = true;
             }
         }
-
         // 텍스트 알파값 적용
-        Color textColor = _noThanks.color;
-        textColor.a = _alpha / 255f;
-        _noThanks.color = textColor;
+        for (int i = 0; i < _noThanks.Count; i++)
+        {
+            Color textColor = _noThanks[i].color;
+            textColor.a = _alpha / 255f;
+            _noThanks[i].color = textColor;
+        }
     }
 
     // 화살표 UI 코루틴
@@ -109,9 +111,12 @@ public class UIManager : MonoBehaviour
             {
                 t += Time.deltaTime * _movementSpeed;
                 float newX = Mathf.Lerp(startX, targetX, t);
-                Vector3 newPosition = _bonusArrow.rectTransform.localPosition;
-                newPosition.x = newX;
-                _bonusArrow.rectTransform.localPosition = newPosition;
+                for (int i = 0; i < _bonusArrow.Count; i++)
+                {
+                    Vector3 newPosition = _bonusArrow[i].rectTransform.localPosition;
+                    newPosition.x = newX;
+                    _bonusArrow[i].rectTransform.localPosition = newPosition;
+                }
                 yield return null;
             }
 

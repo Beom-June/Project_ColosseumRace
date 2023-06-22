@@ -26,10 +26,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject _mainCamera;
     [SerializeField] private GameObject _eventCameraPoint;
     [SerializeField] private GameObject _returnCameraPoint;
+    [SerializeField] private GameObject _bossCameraPoint;
     [SerializeField] private float _cameraMoveTime;
     private Transform _savePosition;
 
-    [Header("Event Settings")]
+    [Header("Camera Event Settings")]
     [SerializeField] private GameObject _eventInOut;                //  안에서 통로로 나갈때
     [SerializeField] private GameObject _eventOutInt;               //  통로에서 안으로 들어올 때
     [SerializeField] private float _changTime;
@@ -93,8 +94,6 @@ public class PlayerController : MonoBehaviour
         // 충돌한 객체들을 확인
         foreach (Collider hit in hits)
         {
-            Debug.Log("타겟 들어옴");
-
             if (!_isAttackDelay)
             {
                 // 타겟이 들어왔을 때 해당 애니메이션을 트리거
@@ -137,7 +136,6 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(time);
         _isAttackDelay = false;
     }
-
     // 카메라 움직임 코루틴
     IEnumerator MoveCameraSmoothly(Transform start, Transform end, float duration, GameObject targetObject)
     {
@@ -176,7 +174,6 @@ public class PlayerController : MonoBehaviour
 
         _isChecking = false;
     }
-
     private IEnumerator TriggerEvent02(float time)
     {
         _isChecking = true;
@@ -190,6 +187,7 @@ public class PlayerController : MonoBehaviour
 
         _isChecking = false;
     }
+
     private void OnTriggerEnter(Collider collider)
     {
         if (collider.CompareTag("EventPoint01"))
@@ -206,6 +204,10 @@ public class PlayerController : MonoBehaviour
         if (collider.CompareTag("ReturnPoint"))
         {
             StartCoroutine(MoveCameraSmoothly(_eventCameraPoint.transform, _returnCameraPoint.transform, _cameraMoveTime, _mainCamera));
+        }
+        if (collider.CompareTag("BossPoint"))
+        {
+            StartCoroutine(MoveCameraSmoothly(_returnCameraPoint.transform, _bossCameraPoint.transform, _cameraMoveTime, _mainCamera));
         }
     }
 }

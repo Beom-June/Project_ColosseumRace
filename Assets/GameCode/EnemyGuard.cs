@@ -6,17 +6,29 @@ using UnityEngine.AI;
 
 public class EnemyGuard : MonoBehaviour
 {
+    [SerializeField] GameManager _gameManager;
     [SerializeField] private float _flyAwaySpeed = 10.0f;           //  날라가는 속도
     [SerializeField] private Vector3 _flyVector;                    //  날라가는 방향벡터
     [SerializeField] private int _guardLevel;                       //  해당 Enemy Level
     [SerializeField] private Text _txtguardLevel;                   //  해당 Enemy Level Text
+
+    [Header("Boss Setings")]
     [SerializeField] private bool _isBoss;                         //  보스 이벤트용 bool 값
+    [SerializeField] private float _radius = 5f;
+    [SerializeField] private LayerMask _targetPlayer;
+    [SerializeField] private float _attackDelayTime = 3.0f;      // 공격 딜레이 시간
+    [SerializeField] private bool _isAttackDelay = false;        // 공격 딜레이 bool 값
+    [SerializeField] private Animator _playerAnimator;
+    [SerializeField] private float _jumpAttackCheckInterval = 1f;   // JumpAttack 체크 간격 설정 (1초마다 체크)
+    [SerializeField] private GameObject _endUI;
+    private bool _canCheckJumpAttack = true;   // JumpAttack 체크 가능한 상태인지 나타내는 변수
+
+
     private Animator _enemyAnimator;
     private NavMeshObstacle _navMeshObstacle;
     private Transform _playerTransform;
 
     private Rigidbody _enemyRigidbody;
-    [SerializeField] GameManager _gameManager;
 
     #region Property
     public int guardLevel => _guardLevel;
@@ -29,21 +41,34 @@ public class EnemyGuard : MonoBehaviour
         _navMeshObstacle = GetComponent<NavMeshObstacle>();
         _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
 
+        // 플레이어의 Animator 컴포넌트 가져오기
+        GameObject _player = GameObject.FindGameObjectWithTag("Player");
+        if (_player != null)
+        {
+            _playerAnimator = _player.GetComponent<Animator>();
+        }
     }
 
     void Update()
     {
         if (_isBoss)
         {
-            // 보스일 경우 플레이어를 계속 바라보도록 호출
             LookAtPlayer();
+            RaycastToPlayer();
+
+            // JumpAttack 체크 간격 타이머
+            if (_canCheckJumpAttack)
+            {
+                StartCoroutine(CheckJumpAttack());
+            }
         }
+        UpdateGuardLevelText();
     }
 
     // EnemyGuard의 레벨 텍스트를 업데이트함
     private void UpdateGuardLevelText()
     {
-        _txtguardLevel.text = _guardLevel.ToString();
+        _txtguardLevel.text = "Lv. " + (_guardLevel * 10).ToString();
     }
 
     // EnemyGuard의 레벨 텍스트 색상을 변경함
@@ -62,17 +87,29 @@ public class EnemyGuard : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider collider)
+    private void RaycastToPlayer()
     {
-        if (collider.CompareTag("Zone") && _gameManager.redCount >= _guardLevel)
+        // 스피어 레이캐스트 발사
+        Collider[] hits = Physics.OverlapSphere(transform.position, _radius, _targetPlayer);
+
+        // 충돌한 객체들을 확인
+        foreach (Collider hit in hits)
         {
-            FlyAway();
+            Debug.Log("플레이어 들어옴");
+
+            if (!_isAttackDelay)
+            {
+                // 타겟이 들어왔을 때 해당 애니메이션을 트리거
+                _enemyAnimator.SetTrigger("doAttack");
+
+                // 시작하여 일정 시간이 지난 후 공격 딜레이를 리셋
+                _isAttackDelay = true;
+                StartCoroutine(ResetAttackDelay(_attackDelayTime));
+            }
         }
     }
-
     private void FlyAway()
     {
-        Debug.Log("옴?");
         // NavMeshAgent를 비활성화하여 이동 중지
         _navMeshObstacle.enabled = false;
 
@@ -84,5 +121,64 @@ public class EnemyGuard : MonoBehaviour
         Vector3 flyDirection = transform.up + _flyVector.normalized;
         _enemyRigidbody.AddForce(flyDirection * _flyAwaySpeed, ForceMode.Impulse);
 
+    }
+    //  공격 딜레이 코루틴
+    private IEnumerator ResetAttackDelay(float time)
+    {
+        yield return new WaitForSeconds(time);
+        _isAttackDelay = false;
+    }
+    // JumpAttack 체크 간격 타이머 코루틴
+    private IEnumerator CheckJumpAttack()
+    {
+        _canCheckJumpAttack = false;
+
+        yield return new WaitForSeconds(_jumpAttackCheckInterval);
+
+        // JumpAttack 체크
+        bool _doJumpAttack = _playerAnimator.GetBool("doStandingJumpAttack");
+
+        // JumpAttack이면 _guardLevel 감소 및 날아가기 동작 처리 (플레이어 레벨이 더 높아야 작동하게 함)
+        if (_doJumpAttack && _gameManager.redCount >= _guardLevel)
+        {
+            _guardLevel--;
+
+            // _guardLevel이 0이 되면 날아가기 동작 수행
+            if (_guardLevel == 0)
+            {
+                FlyAway();
+                _endUI.SetActive(true);
+                _playerAnimator.SetTrigger("doVictory");
+            }
+        }
+        _canCheckJumpAttack = true;
+    }
+
+    private void OnTriggerEnter(Collider collider)
+    {
+        if (collider.CompareTag("Zone") && _gameManager.redCount >= _guardLevel)
+        {
+            // 보스가 아니면 바로 날려버림
+            if (!_isBoss)
+            {
+                FlyAway();
+            }
+        }
+        // if (_isBoss && collider.CompareTag("Zone"))
+        // {
+        //     Debug.Log("111");
+        //     bool _doJumpAttack = _playerAnimator.GetBool("doStandingJumpAttack");
+        //     if (_doJumpAttack)
+        //     {
+        //         Debug.Log("2222");
+        //         _guardLevel--;
+        //         // 적 레벨이 0 이면 날려버림
+        //         if (_guardLevel == 0)
+        //         {
+        //             FlyAway();
+        //         }
+        //     }
+
+        // }
     }
 }

@@ -29,6 +29,8 @@ public class ReinforcementsController : MonoBehaviour
             // 플레이어의 애니메이션 값을 가져와서 현재 객체의 애니메이션에 적용
             float _isRun = _playerAnimator.GetFloat("isRun");
             bool _doAttack = _playerAnimator.GetBool("doAttack");
+            bool _doJumpAttack = _playerAnimator.GetBool("doStandingJumpAttack");
+            bool _doVictory = _playerAnimator.GetBool("doVictory");
 
             // 현재 객체의 Animator 컴포넌트에 애니메이션 값을 설정
             Animator _animator = GetComponent<Animator>();
@@ -38,6 +40,14 @@ public class ReinforcementsController : MonoBehaviour
             if (_doAttack)
             {
                 _animator.SetTrigger("doAttack");
+            }
+            else if (_doJumpAttack)
+            {
+                _animator.SetTrigger("doStandingJumpAttack");
+            }
+            else if (_doVictory)
+            {
+                _animator.SetTrigger("doVictory");
             }
         }
     }

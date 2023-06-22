@@ -15,11 +15,13 @@ TagManager:
   - Knight
   - EventPoint01
   - EventPoint02
+  - BossPoint
+  - Boss
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - Computer

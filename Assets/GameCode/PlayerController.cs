@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 _moveVector;                                    //  moveVector 저장 
     private Animator _playerAnimator;                               //  Animator 저장
     private Rigidbody _playerRigidbody;                             //  Rigidbody 저장
+    private NavMeshAgent _playerNavMeshAgent;                       // NavMeshAgent 저장
 
     [Header("Raycast Settings")]
     [SerializeField] private float _radius = 5f;
@@ -41,6 +43,7 @@ public class PlayerController : MonoBehaviour
     {
         _playerAnimator = GetComponent<Animator>();
         _playerRigidbody = GetComponent<Rigidbody>();
+        _playerNavMeshAgent = GetComponent<NavMeshAgent>();
 
     }
 
@@ -66,7 +69,8 @@ public class PlayerController : MonoBehaviour
     private void PlayerMove()
     {
         _moveVector = new Vector3(_horizontalAxis, 0, _verticalAxis).normalized;
-        transform.position += _moveVector * _moveSpeed * Time.deltaTime;
+        Vector3 moveDirection = _moveVector * _playerNavMeshAgent.speed;
+        _playerNavMeshAgent.Move(moveDirection * Time.deltaTime);
         _playerAnimator.SetFloat("isRun", _isRun ? 1f : 0f);
     }
 
@@ -111,16 +115,11 @@ public class PlayerController : MonoBehaviour
         // 충돌한 객체들을 확인
         foreach (Collider hit in hits)
         {
-            Debug.Log("나이트옴");
 
             if (!_isAttackDelay)
             {
                 // 타겟이 들어왔을 때 해당 애니메이션을 트리거
                 _playerAnimator.SetTrigger("doStandingJumpAttack");
-
-                //// 시작하여 일정 시간이 지난 후 공격 딜레이를 리셋
-                //_isAttackDelay = true;
-                //StartCoroutine(ResetAttackDelay(_attackDelayTime));
             }
         }
     }

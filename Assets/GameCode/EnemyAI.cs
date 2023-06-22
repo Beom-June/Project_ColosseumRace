@@ -106,7 +106,6 @@ public class EnemyAI : MonoBehaviour
         // 다음 웨이포인트 설정
         SetRandomWayPoint();
     }
-
     private void ControllParticle()
     {
         // 애들 위치에서 _bloodParticle 파티클 생성
@@ -117,6 +116,7 @@ public class EnemyAI : MonoBehaviour
         // _bloodParticle 재생
         bloodParticleInstance.Play();
     }
+
     private void OnTriggerEnter(Collider collider)
     {
         if (collider.CompareTag("WayPoint"))
@@ -131,7 +131,6 @@ public class EnemyAI : MonoBehaviour
             if (_enemyZone.spawnedReinforcementsCount > 0)
             {
                 _enemyZone.spawnedReinforcementsCount--;
-
                 ControllParticle();
 
                 GameObject reinforcementToRemove = _enemyZone.spawnedReinforcements[_enemyZone.spawnedReinforcementsCount];
